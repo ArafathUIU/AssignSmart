@@ -205,4 +205,67 @@ public class AssignmentsController : ControllerBase
             answer.CreatedAt
         ));
     }
+
+    [HttpPost("{assignmentId:guid}/check-similarity")]
+    [Authorize(Roles = "Teacher")]
+    public async Task<ActionResult<SimilarityCheckResponse>> CheckSimilarity(
+        Guid assignmentId,
+        [FromQuery] double threshold = 0.60)
+    {
+        var teacherId = User.GetUserId();
+
+        var assignment = await _db.Assignments
+            .FirstOrDefaultAsync(a => a.Id == assignmentId)
+            ?? throw new ApiException(StatusCodes.Status404NotFound, "Assignment not found.");
+
+        if (assignment.TeacherId != teacherId)
+            throw new ApiException(StatusCodes.Status403Forbidden, "Only the assignment owner can check similarity.");
+
+        var submissions = await _db.Submissions
+            .Where(s => s.AssignmentId == assignmentId && !string.IsNullOrWhiteSpace(s.Answer))
+            .Include(s => s.Student)
+            .ToListAsync();
+
+        if (submissions.Count < 2)
+        {
+            return Ok(new SimilarityCheckResponse(new List<SimilarityResult>(), 0, 0, threshold));
+        }
+
+        var results = new List<SimilarityResult>();
+        var totalComparisons = 0;
+
+        for (int i = 0; i < submissions.Count; i++)
+        {
+            for (int j = i + 1; j < submissions.Count; j++)
+            {
+                totalComparisons++;
+                var sim = SimilarityService.ComputeSimilarity(
+                    submissions[i].Answer,
+                    submissions[j].Answer);
+
+                if (sim >= threshold)
+                {
+                    var preview = submissions[j].Answer.Length > 100
+                        ? submissions[j].Answer[..100] + "..."
+                        : submissions[j].Answer;
+
+                    results.Add(new SimilarityResult(
+                        submissions[i].Id,
+                        submissions[i].Student.Name,
+                        submissions[j].Id,
+                        submissions[j].Student.Name,
+                        Math.Round(sim * 100, 1),
+                        preview
+                    ));
+                }
+            }
+        }
+
+        return Ok(new SimilarityCheckResponse(
+            results.OrderByDescending(r => r.Similarity).ToList(),
+            totalComparisons,
+            results.Count,
+            threshold
+        ));
+    }
 }

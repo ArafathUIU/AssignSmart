@@ -11,7 +11,9 @@ import {
   MessageSquare,
   Pencil,
   Reply,
+  ScanSearch,
   Send,
+  AlertTriangle,
 } from "lucide-react";
 import AuthGuard from "@/components/AuthGuard";
 import { api } from "@/lib/api";
@@ -56,6 +58,14 @@ export default function TeacherAssignmentDetailPage(
   const [questionsLoading, setQuestionsLoading] = useState(false);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [postingAnswerId, setPostingAnswerId] = useState<string | null>(null);
+
+  const [similarityResults, setSimilarityResults] = useState<{
+    results: { submissionAId: string; studentAName: string; submissionBId: string; studentBName: string; similarity: number; answerPreview: string }[];
+    totalComparisons: number;
+    flaggedCount: number;
+    threshold: number;
+  } | null>(null);
+  const [checkingSimilarity, setCheckingSimilarity] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -185,6 +195,21 @@ export default function TeacherAssignmentDetailPage(
     }
   }
 
+  async function handleCheckSimilarity() {
+    setCheckingSimilarity(true);
+    try {
+      const result = await api.post<any>(
+        `/api/assignments/${id}/check-similarity?threshold=0.6`,
+        {},
+      );
+      setSimilarityResults(result);
+    } catch (err) {
+      notifyError(err instanceof Error ? err.message : "Similarity check failed.");
+    } finally {
+      setCheckingSimilarity(false);
+    }
+  }
+
   return (
     <AuthGuard roles={["Teacher"]}>
       {loading ? (
@@ -203,13 +228,23 @@ export default function TeacherAssignmentDetailPage(
             title={assignment.title}
             subtitle={`${assignment.className} · ${assignment.subjectName} · ${assignment.teacherName}`}
             action={
-              <Button
-                variant={assignment.isPublished ? "secondary" : "primary"}
-                onClick={handleTogglePublish}
-                loading={publishing}
-              >
-                {assignment.isPublished ? "Set to draft" : "Publish"}
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleCheckSimilarity}
+                  loading={checkingSimilarity}
+                >
+                  <ScanSearch className="h-4 w-4" /> Check similarity
+                </Button>
+                <Button
+                  variant={assignment.isPublished ? "secondary" : "primary"}
+                  onClick={handleTogglePublish}
+                  loading={publishing}
+                >
+                  {assignment.isPublished ? "Set to draft" : "Publish"}
+                </Button>
+              </div>
             }
           />
 
@@ -217,6 +252,58 @@ export default function TeacherAssignmentDetailPage(
             <Alert tone="error" className="mb-4" onClose={() => setError(null)}>
               {error}
             </Alert>
+          )}
+
+          {similarityResults && (
+            <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-[var(--shadow-card)]">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-bold text-slate-900">
+                    Similarity Check Results
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    {similarityResults.totalComparisons} comparisons · Threshold: {Math.round(similarityResults.threshold * 100)}%
+                  </p>
+                </div>
+                {similarityResults.flaggedCount === 0 ? (
+                  <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                    No copies found
+                  </span>
+                ) : (
+                  <span className="rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-700">
+                    {similarityResults.flaggedCount} flagged
+                  </span>
+                )}
+              </div>
+              {similarityResults.flaggedCount > 0 && (
+                <div className="space-y-3">
+                  {similarityResults.results.map((r, i) => (
+                    <div key={i} className="rounded-xl border border-amber-200 bg-amber-50/40 p-4">
+                      <div className="mb-2 flex items-center justify-between">
+                        <p className="text-sm font-semibold text-amber-800">
+                          <AlertTriangle className="mr-1.5 inline h-4 w-4" />
+                          {r.similarity}% similar
+                        </p>
+                        <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+                          r.similarity >= 85 ? "bg-rose-100 text-rose-700" :
+                          r.similarity >= 75 ? "bg-amber-100 text-amber-700" :
+                          "bg-yellow-100 text-yellow-700"
+                        }`}>
+                          {r.similarity >= 85 ? "High" : r.similarity >= 75 ? "Medium" : "Low"}
+                        </span>
+                      </div>
+                      <p className="text-sm text-amber-700">
+                        <strong>{r.studentAName}</strong> ↔ <strong>{r.studentBName}</strong>
+                      </p>
+                      <div className="mt-2 rounded-lg bg-white p-3 text-xs text-slate-600">
+                        <p className="mb-1 font-semibold text-slate-400 uppercase tracking-wide">Answer preview</p>
+                        {r.answerPreview}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           )}
 
           <div className="mb-6 flex flex-wrap gap-x-6 gap-y-3 rounded-xl border border-slate-200/80 bg-white px-5 py-4 shadow-[var(--shadow-card)]">
