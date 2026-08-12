@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { getStoredUser, getToken } from "@/lib/api";
 import type { Role } from "@/lib/types";
 import AppShell from "./layout/AppShell";
@@ -11,8 +11,6 @@ interface AuthSnapshot {
   role: Role | undefined;
 }
 
-let snapshotKey = "";
-let cachedSnapshot: AuthSnapshot = { hasAuth: false, role: undefined };
 const serverSnapshot: AuthSnapshot = { hasAuth: false, role: undefined };
 
 function readSnapshot(): AuthSnapshot {
@@ -22,22 +20,22 @@ function readSnapshot(): AuthSnapshot {
   return { hasAuth: true, role: user.role };
 }
 
+function subscribe(callback: () => void): () => void {
+  const handle = () => callback();
+  window.addEventListener("storage", handle);
+  window.addEventListener("auth-changed", handle as EventListener);
+  return () => {
+    window.removeEventListener("storage", handle);
+    window.removeEventListener("auth-changed", handle as EventListener);
+  };
+}
+
 function getSnapshot(): AuthSnapshot {
-  const next = readSnapshot();
-  const key = `${next.hasAuth}|${next.role ?? ""}`;
-  if (key !== snapshotKey) {
-    snapshotKey = key;
-    cachedSnapshot = next;
-  }
-  return cachedSnapshot;
+  return readSnapshot();
 }
 
 function getServerSnapshot(): AuthSnapshot {
   return serverSnapshot;
-}
-
-function subscribe(): () => void {
-  return () => {};
 }
 
 export default function AuthGuard({
@@ -48,6 +46,8 @@ export default function AuthGuard({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+
   const { hasAuth, role } = useSyncExternalStore(
     subscribe,
     getSnapshot,
@@ -55,14 +55,19 @@ export default function AuthGuard({
   );
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
     if (!hasAuth) {
       router.replace("/login");
     } else if (roles && role != null && !roles.includes(role)) {
       router.replace("/dashboard");
     }
-  }, [hasAuth, role, roles, router]);
+  }, [mounted, hasAuth, role, roles, router]);
 
-  const authorized = hasAuth && (!roles || (role != null && roles.includes(role)));
+  const authorized = mounted && hasAuth && (!roles || (role != null && roles.includes(role)));
 
   if (!authorized) {
     return (
