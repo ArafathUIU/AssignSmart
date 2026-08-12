@@ -1,0 +1,6 @@
+@AssignSmart.Api_HostAddress = http://localhost:5164
+
+GET {{AssignSmart.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
