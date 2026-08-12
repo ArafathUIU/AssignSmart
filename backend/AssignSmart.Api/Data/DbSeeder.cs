@@ -271,6 +271,13 @@ public static class DbSeeder
             (class10A, physics, teachers[3],   "Sound Waves",         "Explain how sound travels through different mediums.",             20, -10),
             (class7A, genScience, teachers[3], "Food & Nutrition",    "List the six food groups and explain their importance.",           15, -12),
             (class6B, bangla1st, teachers[0],  "????? (????)",       "??????? ???? ????? ?????? ????.",                                  20, -8),
+
+            // ---- Demo teacher's assignments (for dashboard testing) ----
+            (class10A, math, demoTeacher,     "Quadratic Equations Quiz", "Solve 10 quadratic equations showing your working.",                20, 8),
+            (class10A, physics, demoTeacher,  "Electric Circuits",       "Draw and label a series circuit and a parallel circuit.",           25, 6),
+            (class10A, english1st, demoTeacher,"Narrative Essay",         "Write a 300-word narrative essay on 'My First Day at School'.",    30, 12),
+            (class9A, math, demoTeacher,      "Algebraic Fractions",     "Simplify the given algebraic fractions from Chapter 5.",           20, 5),
+            (class9A, chemistry, demoTeacher, "Acids, Bases & Salts",    "Identify 5 everyday acids, bases and salts with their uses.",      25, 10),
         };
 
         var assignments = new List<Assignment>();
