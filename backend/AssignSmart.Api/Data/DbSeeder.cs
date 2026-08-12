@@ -139,6 +139,7 @@ public static class DbSeeder
 
         // Keep demo student
         var demoStudent = NewStudent("Tanvir Hasan", "student@assignsmart.com", class10A);
+        students.Add(demoStudent);
 
         // ========================================
         // 6. SAVE USERS, CLASSES, SUBJECTS
