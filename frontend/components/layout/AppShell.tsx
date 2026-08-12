@@ -66,6 +66,7 @@ const teacherNav: NavSection[] = [
       { href: "/teacher/assignments", label: "Assignments", icon: <ClipboardList className="h-4 w-4" /> },
       { href: "/teacher/submissions", label: "Submissions", icon: <Inbox className="h-4 w-4" /> },
       { href: "/teacher/calendar", label: "Calendar", icon: <Calendar className="h-4 w-4" /> },
+      { href: "/teacher/marksheet", label: "Marksheet", icon: <BookOpen className="h-4 w-4" /> },
       { href: "/teacher/performance", label: "Performance", icon: <TrendingUp className="h-4 w-4" /> },
     ],
   },

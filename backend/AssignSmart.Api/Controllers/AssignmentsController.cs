@@ -276,4 +276,88 @@ public class AssignmentsController : ControllerBase
             threshold
         ));
     }
+
+    [HttpGet("marksheet")]
+    [Authorize(Roles = "Teacher")]
+    public async Task<ActionResult<MarksheetResponse>> GetMarksheet([FromQuery] Guid? classId)
+    {
+        var teacherId = User.GetUserId();
+
+        var teacherAssignments = await _db.TeacherAssignments
+            .Where(t => t.TeacherId == teacherId)
+            .Include(t => t.Class)
+            .ToListAsync();
+
+        if (!teacherAssignments.Any())
+            return Ok(new MarksheetResponse("", new(), new()));
+
+        // Determine class to show
+        var selectedClassId = classId ?? teacherAssignments.First().ClassId;
+        var selectedClass = teacherAssignments.FirstOrDefault(t => t.ClassId == selectedClassId)
+            ?? teacherAssignments.First();
+
+        var className = selectedClass.Class.Name;
+
+        // Get all published assignments for this class
+        var assignments = await _db.Assignments
+            .Where(a => a.ClassId == selectedClassId && a.TeacherId == teacherId)
+            .OrderBy(a => a.Deadline)
+            .ToListAsync();
+
+        // Get all students in this class
+        var students = await _db.Users
+            .Where(u => u.ClassId == selectedClassId && u.Role == Role.Student)
+            .OrderBy(u => u.Name)
+            .ToListAsync();
+
+        // Get all submissions for these assignments
+        var submissionList = await _db.Submissions
+            .Where(s => assignments.Select(a => a.Id).Contains(s.AssignmentId))
+            .Include(s => s.Student)
+            .ToListAsync();
+
+        var assn = assignments.Select(a => new MarksheetAssignment(a.Id, a.Title, a.MaxMarks)).ToList();
+
+        var rows = new List<MarksheetRow>();
+        foreach (var student in students)
+        {
+            var cells = new List<MarksheetCell>();
+            decimal? totalMarks = 0;
+            decimal? totalMax = 0;
+            var hasAnyGraded = false;
+
+            foreach (var assignment in assignments)
+            {
+                totalMax += assignment.MaxMarks;
+                var sub = submissionList.FirstOrDefault(s =>
+                    s.AssignmentId == assignment.Id && s.StudentId == student.Id);
+
+                if (sub is null)
+                {
+                    cells.Add(new MarksheetCell(assignment.Id, "Not submitted", null));
+                }
+                else
+                {
+                    cells.Add(new MarksheetCell(assignment.Id, sub.Status.ToString(),
+                        sub.Status == SubmissionStatus.Graded ? sub.Marks : null));
+                    if (sub.Status == SubmissionStatus.Graded)
+                    {
+                        totalMarks += sub.Marks ?? 0;
+                        hasAnyGraded = true;
+                    }
+                }
+            }
+
+            rows.Add(new MarksheetRow(
+                student.Id,
+                student.Name,
+                cells,
+                hasAnyGraded ? totalMarks : null,
+                totalMax,
+                hasAnyGraded && totalMax > 0 ? Math.Round((double)((totalMarks ?? 0) / totalMax * 100), 1) : null
+            ));
+        }
+
+        return Ok(new MarksheetResponse(className, assn, rows));
+    }
 }

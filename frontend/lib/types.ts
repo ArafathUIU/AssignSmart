@@ -95,3 +95,30 @@ export interface AssignmentAnswer {
   answer: string;
   createdAt: string;
 }
+
+export interface MarksheetAssignment {
+  id: string;
+  title: string;
+  maxMarks: number;
+}
+
+export interface MarksheetCell {
+  assignmentId: string;
+  status: string;
+  marks: number | null;
+}
+
+export interface MarksheetRow {
+  studentId: string;
+  studentName: string;
+  cells: MarksheetCell[];
+  totalMarks: number | null;
+  totalMax: number | null;
+  percentage: number | null;
+}
+
+export interface MarksheetResponse {
+  className: string;
+  assignments: MarksheetAssignment[];
+  rows: MarksheetRow[];
+}
