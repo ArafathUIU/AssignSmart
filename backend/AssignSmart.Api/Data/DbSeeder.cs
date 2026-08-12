@@ -191,50 +191,78 @@ public static class DbSeeder
         }
 
         // ========================================
-        // 8. ASSIGNMENTS (2-3 per class, varied deadlines)
+        // 8. ASSIGNMENTS (per class, varied deadlines)
         // ========================================
         var rng = new Random(42);
 
+        var allClasses = new[] { class6A, class6B, class7A, class7B, class8A, class8B, class9A, class9B, class10A, class10B };
+
         var assignmentDefs = new List<(SchoolClass cls, Subject subj, User teacher, string title, string desc, int maxMarks, int daysAhead)>
         {
-            // Class 8A
-            (class8A, math, teachers[2],  "Algebraic Expressions",   "Solve problems on algebraic expressions from Chapter 4.",         25, 7),
-            (class8A, genScience, teachers[3],  "Light & Reflection",  "Explain the laws of reflection with diagrams and examples.",      20, 5),
-            (class8A, bangla1st, teachers[0],   "???? ????",          "?????????? ??? ?????????? ????? ??? ???? ??? (???????? 200 ???)", 30, 10),
-            (class8A, english1st, teachers[1],  "Reading Comprehension", "Read the passage and answer the questions that follow.",          25, 8),
-            (class8A, bgs, teachers[4],         "Liberation War 1971",  "Write a short essay on the Mujibnagar Government.",              20, 14),
+            // ---- Class 6 (basic level) ----
+            (class6A, math, teachers[2],     "Number Systems",       "Solve problems on place value and Roman numerals from Chapter 1.",  20, 5),
+            (class6A, genScience, teachers[3],"Living World",         "Draw and label a typical plant cell and animal cell.",             15, 8),
+            (class6A, english1st, teachers[1],"My School Paragraph",  "Write a paragraph about your school (80-100 words).",              20, 6),
+            (class6A, bangla1st, teachers[0], "????? ???? (????)",   "??????? ???? ?????? ???? ???? ??? ???? ???.",                      20, 10),
+            (class6B, math, teachers[2],      "Fractions",            "Add, subtract, multiply and divide fractions from Chapter 3.",     20, 7),
+            (class6B, bgs, teachers[4],       "Six Seasons",          "Name the six seasons of Bangladesh and describe two in detail.",   20, 12),
+            (class6B, english2nd, teachers[1],"Punctuation",          "Rewrite the passage with correct punctuation and capitalization.", 15, 9),
 
-            // Class 8B
-            (class8B, math, teachers[2],        "Geometry Basics",    "Prove the theorems on triangles from Chapter 6.",                25, 6),
-            (class8B, english2nd, teachers[1],  "Paragraph Writing",  "Write a paragraph on 'A Village Market' (150 words).",           20, 9),
-            (class8B, ict, teachers[5],         "MS Word Assignment",  "Create a formatted document with tables and images.",            15, 12),
+            // ---- Class 7 ----
+            (class7A, math, teachers[2],      "Ratio & Proportion",   "Solve problems on ratio and proportion including unitary method.", 20, 6),
+            (class7A, genScience, teachers[3],"Matter & Energy",      "Explain the three states of matter with examples.",                15, 5),
+            (class7A, bangla2nd, teachers[0], "????? (????)",        "????????? ???????? ???? ??? ???? ???.",                             20, 11),
+            (class7B, math, teachers[2],      "Linear Equations",     "Solve simple linear equations in one variable from Chapter 7.",    25, 7),
+            (class7B, ict, teachers[5],       "Computer Basics",      "List the main parts of a computer and explain their functions.",   15, 10),
+            (class7B, english1st, teachers[1],"Story Writing",        "Write a short story based on the given outline (150 words).",      25, 8),
 
-            // Class 9A
-            (class9A, physics, teachers[3],     "Newton's Laws",      "Explain Newton's three laws of motion with mathematical proofs.", 25, 6),
-            (class9A, chemistry, teachers[4],   "Periodic Table",     "Memorize the first 20 elements with their symbols and valencies.",20, 5),
-            (class9A, biology, teachers[5],     "Cell Structure",     "Draw and label a plant cell and an animal cell.",                20, 8),
-            (class9A, math, teachers[2],        "Trigonometry",       "Solve the trigonometric ratio problems from Chapter 9.",         30, 10),
-            (class9A, english1st, teachers[1],  "Nelson Mandela",     "Read the passage and write a summary in your own words.",        25, 11),
+            // ---- Class 8 ----
+            (class8A, math, teachers[2],      "Algebraic Expressions","Solve problems on algebraic expressions from Chapter 4.",           25, 7),
+            (class8A, genScience, teachers[3],"Light & Reflection",   "Explain the laws of reflection with diagrams and examples.",       20, 5),
+            (class8A, bangla1st, teachers[0], "???? ????",           "?????????? ??? ?????????? ????? ??? ???? ??? (???????? 200 ???)",  30, 10),
+            (class8A, english1st, teachers[1],"Reading Comprehension","Read the passage and answer the questions that follow.",            25, 4),
+            (class8A, bgs, teachers[4],        "Liberation War 1971", "Write a short essay on the Mujibnagar Government.",                20, 14),
+            (class8B, math, teachers[2],       "Geometry Basics",     "Prove the theorems on triangles from Chapter 6.",                  25, 6),
+            (class8B, english2nd, teachers[1], "Paragraph Writing",   "Write a paragraph on 'A Village Market' (150 words).",             20, 9),
+            (class8B, ict, teachers[5],        "MS Word Assignment",  "Create a formatted document with tables and images.",               15, 12),
+            (class8B, bangla1st, teachers[0],  "????? (????)",       "??????? ????? ???? ??? ???? ???.",                                  25, 8),
 
-            // Class 9B
-            (class9B, physics, teachers[3],     "Motion & Velocity",  "Calculate velocity and acceleration using equations of motion.", 25, 7),
-            (class9B, math, teachers[2],        "Set Theory",         "Solve set operations (union, intersection, difference).",        20, 8),
-            (class9B, bangla2nd, teachers[0],   "??????? (?????)",   "????????? ???????? ????? ????? ??? ???? ???.",                   25, 12),
+            // ---- Class 9 (Science group) ----
+            (class9A, physics, teachers[3],    "Newton's Laws",      "Explain Newton's three laws of motion with mathematical proofs.",  25, 6),
+            (class9A, chemistry, teachers[4],  "Periodic Table",     "Memorize the first 20 elements with their symbols and valencies.", 20, 5),
+            (class9A, biology, teachers[5],    "Cell Structure",     "Draw and label a plant cell and an animal cell.",                  20, 8),
+            (class9A, math, teachers[2],       "Trigonometry",       "Solve the trigonometric ratio problems from Chapter 9.",           30, 10),
+            (class9A, english1st, teachers[1], "Nelson Mandela",     "Read the passage and write a summary in your own words.",          25, 11),
+            (class9A, bangla1st, teachers[0],  "????? ???????",     "?????????? ????????? ?????? ????? ???? ???.",                       25, 4),
+            (class9B, physics, teachers[3],    "Motion & Velocity",  "Calculate velocity and acceleration using equations of motion.",   25, 7),
+            (class9B, math, teachers[2],       "Set Theory",         "Solve set operations (union, intersection, difference).",          20, 8),
+            (class9B, bangla2nd, teachers[0],  "??????? (?????)",   "????????? ???????? ????? ????? ??? ???? ???.",                      25, 12),
+            (class9B, chemistry, teachers[4],  "Chemical Bonding",   "Explain ionic and covalent bonds with examples.",                  20, 3),
+            (class9B, english2nd, teachers[1], "Formal Letter",      "Write a formal letter to the editor about road safety.",           20, 6),
 
-            // Class 10A
-            (class10A, math, teachers[2],       "Algebra Worksheet",     "Solve quadratic equations using formula and factorization.",   25, 5),
-            (class10A, physics, teachers[3],    "Ohm's Law",            "State Ohm's Law and solve numerical problems.",                20, 7),
-            (class10A, chemistry, teachers[4],  "Chemical Bonding",     "Explain ionic and covalent bonds with examples.",              25, 10),
-            (class10A, biology, teachers[5],    "Human Heart",          "Draw and explain the structure of the human heart.",           20, 8),
-            (class10A, bangla1st, teachers[0],  "???? ??????",         "??????????????? ????? ?????? ????? ????.",                     30, 14),
-            (class10A, english2nd, teachers[1], "Formal Letter",        "Write a formal letter to the editor about road safety.",       20, 12),
-            (class10A, english1st, teachers[1], "Seen Comprehension",   "Read the passage from Unit 5 and answer the questions.",       25, 4),
+            // ---- Class 10 (Science group, SSC focus) ----
+            (class10A, math, teachers[2],      "Algebra Worksheet",    "Solve quadratic equations using formula and factorization.",       25, 5),
+            (class10A, physics, teachers[3],   "Ohm's Law",            "State Ohm's Law and solve numerical problems.",                    20, 7),
+            (class10A, chemistry, teachers[4], "Chemical Bonding",     "Explain ionic and covalent bonds with examples.",                  25, 10),
+            (class10A, biology, teachers[5],   "Human Heart",          "Draw and explain the structure of the human heart.",               20, 8),
+            (class10A, bangla1st, teachers[0], "???? ??????",         "??????????????? ????? ?????? ????? ????.",                          30, 14),
+            (class10A, english2nd, teachers[1],"Formal Letter",        "Write a formal letter to the editor about road safety.",           20, 12),
+            (class10A, english1st, teachers[1],"Seen Comprehension",   "Read the passage from Unit 5 and answer the questions.",           25, 4),
+            (class10A, math, teachers[2],      "Geometry (Circle)",    "Prove the theorem: angle in a semicircle is a right angle.",       25, 3),
+            (class10B, physics, teachers[3],   "Electric Current",     "Explain AC and DC current with examples and diagrams.",             20, 9),
+            (class10B, math, teachers[2],      "Statistics",           "Calculate mean, median and mode for the given data set.",          20, 6),
+            (class10B, biology, teachers[5],   "Human Digestive System","Draw and label the human digestive system. Explain each part.",    25, 5),
+            (class10B, bangla2nd, teachers[0], "????? (????/?????)",  "????????????? ???? ???? ??? ?????? ?????? ????.",                  25, 11),
+            (class10B, ict, teachers[6],       "HTML Basics",          "Create a simple webpage with headings, paragraphs and links.",     15, 7),
+            (class10A, ict, teachers[6],       "Multimedia Concepts",  "Explain the components of a multimedia system.",                   20, 13),
 
-            // Covers a variety of deadlines: some soon, some later, some past
-            // Past deadlines for test data diversity
-            (class10A, ict, teachers[6],         "HTML Basics",         "Create a simple webpage with headings, paragraphs and links.",  15, -3),
-            (class9A, bgs, teachers[4],          "Climate of Bangladesh","Write about the six seasons of Bangladesh.",                    20, -5),
-            (class8A, bangla2nd, teachers[0],    "???? ??????",        "????????? ??????? ???? ??? ???? ???.",                         25, -7),
+            // Past deadline assignments for historical data
+            (class9A, bgs, teachers[4],        "Climate of Bangladesh","Write about the six seasons of Bangladesh.",                        20, -5),
+            (class8A, bangla2nd, teachers[0],  "???? ??????",         "????????? ??????? ???? ??? ???? ???.",                              25, -7),
+            (class9B, biology, teachers[5],    "Plant Tissues",       "Describe the types of plant tissues with diagrams.",               20, -3),
+            (class10A, physics, teachers[3],   "Sound Waves",         "Explain how sound travels through different mediums.",             20, -10),
+            (class7A, genScience, teachers[3], "Food & Nutrition",    "List the six food groups and explain their importance.",           15, -12),
+            (class6B, bangla1st, teachers[0],  "????? (????)",       "??????? ???? ????? ?????? ????.",                                  20, -8),
         };
 
         var assignments = new List<Assignment>();
@@ -270,23 +298,38 @@ public static class DbSeeder
         db.Assignments.AddRange(assignments);
 
         // ========================================
-        // 9. SUBMISSIONS
+        // 9. SUBMISSIONS (rich, realistic data)
         // ========================================
         var submissions = new List<Submission>();
+        var attachments = new List<SubmissionAttachment>();
 
         foreach (var assignment in assignments)
         {
             var classStudents = students.Where(s => s.ClassId == assignment.ClassId).ToList();
+            var deadlineHasPassed = assignment.Deadline < now;
 
-            // Not all students submit; ~60-80% do
-            foreach (var student in classStudents.Take(rng.Next(2, classStudents.Count + 1)))
+            // 80-100% submission rate for past deadlines, 50-80% for upcoming
+            var submissionRate = deadlineHasPassed ? 0.85 : 0.65;
+            var submitCount = Math.Max(2, (int)(classStudents.Count * submissionRate));
+
+            foreach (var student in classStudents.OrderBy(_ => rng.Next()).Take(submitCount))
             {
-                var submittedAt = assignment.Deadline < now
-                    ? assignment.Deadline.AddHours(-rng.Next(1, 48))
-                    : now.AddHours(-rng.Next(1, 72));
+                // Realistic submission timing
+                var submittedAt = deadlineHasPassed
+                    ? assignment.Deadline.AddHours(-rng.Next(1, 72))  // submitted before deadline
+                    : now.AddHours(-rng.Next(2, 96));                  // varying recency
 
-                // 50% chance it's graded if submitted before now
-                var shouldGrade = rng.Next(2) == 0 && submittedAt < now.AddHours(-1);
+                // Status distribution: 55% Graded, 25% Submitted, 20% Returned
+                var statusRoll = rng.Next(100);
+                var status = statusRoll < 55 ? SubmissionStatus.Graded
+                    : statusRoll < 80 ? SubmissionStatus.Submitted
+                    : SubmissionStatus.Returned;
+
+                // Past deadline but no submission = late submission
+                if (deadlineHasPassed && status == SubmissionStatus.Submitted && rng.Next(10) < 3)
+                {
+                    submittedAt = assignment.Deadline.AddHours(rng.Next(1, 24));
+                }
 
                 var submission = new Submission
                 {
@@ -294,15 +337,61 @@ public static class DbSeeder
                     AssignmentId = assignment.Id,
                     StudentId = student.Id,
                     Answer = GenerateAnswer(assignment.Title, student.Name),
-                    Status = shouldGrade ? SubmissionStatus.Graded : SubmissionStatus.Submitted,
+                    Status = status,
                     SubmittedAt = submittedAt,
                 };
 
-                if (shouldGrade)
+                if (status == SubmissionStatus.Graded)
                 {
-                    submission.Marks = Math.Round((decimal)(rng.Next(60, 100)) / 100m * assignment.MaxMarks, 1);
-                    submission.Feedback = GenerateFeedback(submission.Marks ?? 0, assignment.MaxMarks);
-                    submission.GradedAt = submittedAt.AddHours(rng.Next(2, 48));
+                    var scoreRatio = rng.Next(45, 101) / 100.0; // 45% to 100%
+                    submission.Marks = Math.Round((decimal)scoreRatio * assignment.MaxMarks, 1);
+                    submission.Feedback = GenerateFeedback(submission.Marks.Value, assignment.MaxMarks);
+                    submission.GradedAt = submittedAt.AddHours(rng.Next(6, 96));
+                }
+
+                // 30% of submissions have file attachments
+                if (rng.Next(10) < 3)
+                {
+                    var ext = rng.Next(3) switch
+                    {
+                        0 => ".pdf",
+                        1 => ".docx",
+                        _ => ".png"
+                    };
+                    var attachmentSize = ext switch
+                    {
+                        ".pdf" => rng.Next(50_000, 500_000),
+                        ".docx" => rng.Next(20_000, 200_000),
+                        _ => rng.Next(100_000, 1_000_000)
+                    };
+                    attachments.Add(new SubmissionAttachment
+                    {
+                        Id = Guid.NewGuid(),
+                        SubmissionId = submission.Id,
+                        FileName = $"{student.Name.Replace(" ", "_")}_{assignment.Title.Replace(" ", "_")}{ext}",
+                        ContentType = ext switch
+                        {
+                            ".pdf" => "application/pdf",
+                            ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                            _ => "image/png"
+                        },
+                        FileSize = attachmentSize,
+                        FileData = "[BASE64_CONTENT_PLACEHOLDER]"
+                    });
+
+                    // Some get a second attachment too
+                    if (rng.Next(10) < 3)
+                    {
+                        attachments.Add(new SubmissionAttachment
+                        {
+                            Id = Guid.NewGuid(),
+                            SubmissionId = submission.Id,
+                            FileName = $"supplementary_{rng.Next(1, 99)}.jpg",
+                            ContentType = "image/jpeg",
+                            FileSize = rng.Next(200_000, 2_000_000),
+                            FileData = "[BASE64_CONTENT_PLACEHOLDER]"
+                        });
+                    }
                 }
 
                 submissions.Add(submission);
@@ -310,6 +399,7 @@ public static class DbSeeder
         }
 
         db.Submissions.AddRange(submissions);
+        db.SubmissionAttachments.AddRange(attachments);
         await db.SaveChangesAsync();
     }
 
