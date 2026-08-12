@@ -40,20 +40,20 @@ public static class DbSeeder
         // ========================================
         // 3. SUBJECTS (NCTB curriculum)
         // ========================================
-        var bangla1st = new Subject { Id = Guid.NewGuid(), Name = "Bangla 1st Paper", Code = "BNG1" };
-        var bangla2nd = new Subject { Id = Guid.NewGuid(), Name = "Bangla 2nd Paper", Code = "BNG2" };
+        var bangla1st = new Subject { Id = Guid.NewGuid(), Name = "বাংলা ১ম পত্র", Code = "BNG1" };
+        var bangla2nd = new Subject { Id = Guid.NewGuid(), Name = "বাংলা ২য় পত্র", Code = "BNG2" };
         var english1st = new Subject { Id = Guid.NewGuid(), Name = "English 1st Paper", Code = "ENG1" };
         var english2nd = new Subject { Id = Guid.NewGuid(), Name = "English 2nd Paper", Code = "ENG2" };
-        var math = new Subject { Id = Guid.NewGuid(), Name = "Mathematics", Code = "MATH" };
-        var genScience = new Subject { Id = Guid.NewGuid(), Name = "General Science", Code = "GSCI" };
-        var physics = new Subject { Id = Guid.NewGuid(), Name = "Physics", Code = "PHYS" };
-        var chemistry = new Subject { Id = Guid.NewGuid(), Name = "Chemistry", Code = "CHEM" };
-        var biology = new Subject { Id = Guid.NewGuid(), Name = "Biology", Code = "BIOL" };
-        var bgs = new Subject { Id = Guid.NewGuid(), Name = "Bangladesh & Global Studies", Code = "BGS" };
-        var ict = new Subject { Id = Guid.NewGuid(), Name = "ICT", Code = "ICT" };
-        var islam = new Subject { Id = Guid.NewGuid(), Name = "Islam & Moral Education", Code = "IMED" };
-        var phyEdu = new Subject { Id = Guid.NewGuid(), Name = "Physical Education & Health", Code = "PHED" };
-        var artsCrafts = new Subject { Id = Guid.NewGuid(), Name = "Arts & Crafts", Code = "ARTC" };
+        var math = new Subject { Id = Guid.NewGuid(), Name = "গণিত", Code = "MATH" };
+        var genScience = new Subject { Id = Guid.NewGuid(), Name = "সাধারণ বিজ্ঞান", Code = "GSCI" };
+        var physics = new Subject { Id = Guid.NewGuid(), Name = "পদার্থবিজ্ঞান", Code = "PHYS" };
+        var chemistry = new Subject { Id = Guid.NewGuid(), Name = "রসায়ন", Code = "CHEM" };
+        var biology = new Subject { Id = Guid.NewGuid(), Name = "জীববিজ্ঞান", Code = "BIOL" };
+        var bgs = new Subject { Id = Guid.NewGuid(), Name = "বাংলাদেশ ও বিশ্বপরিচয়", Code = "BGS" };
+        var ict = new Subject { Id = Guid.NewGuid(), Name = "তথ্য ও যোগাযোগ প্রযুক্তি", Code = "ICT" };
+        var islam = new Subject { Id = Guid.NewGuid(), Name = "ইসলাম ও নৈতিক শিক্ষা", Code = "IMED" };
+        var phyEdu = new Subject { Id = Guid.NewGuid(), Name = "শারীরিক শিক্ষা ও স্বাস্থ্য", Code = "PHED" };
+        var artsCrafts = new Subject { Id = Guid.NewGuid(), Name = "চারু ও কারুকলা", Code = "ARTC" };
 
         // ========================================
         // 4. CLASSES (6-10, Section A & B)
