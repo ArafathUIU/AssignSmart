@@ -66,6 +66,7 @@ export default function TeacherAssignmentDetailPage(
     threshold: number;
   } | null>(null);
   const [checkingSimilarity, setCheckingSimilarity] = useState(false);
+  const [excludeLate, setExcludeLate] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -195,11 +196,12 @@ export default function TeacherAssignmentDetailPage(
     }
   }
 
-  async function handleCheckSimilarity() {
+  async function handleCheckSimilarity(excludeLateParam?: boolean) {
+    const exclude = excludeLateParam ?? excludeLate;
     setCheckingSimilarity(true);
     try {
       const result = await api.post<any>(
-        `/api/assignments/${id}/check-similarity?threshold=0.6`,
+        `/api/assignments/${id}/check-similarity?threshold=0.6&excludeLate=${exclude}`,
         {},
       );
       setSimilarityResults(result);
@@ -232,7 +234,7 @@ export default function TeacherAssignmentDetailPage(
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={handleCheckSimilarity}
+                  onClick={() => handleCheckSimilarity()}
                   loading={checkingSimilarity}
                 >
                   <ScanSearch className="h-4 w-4" /> Check similarity
@@ -256,7 +258,7 @@ export default function TeacherAssignmentDetailPage(
 
           {similarityResults && (
             <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-[var(--shadow-card)]">
-              <div className="mb-4 flex items-center justify-between">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <p className="text-sm font-bold text-slate-900">
                     Similarity Check Results
@@ -265,15 +267,30 @@ export default function TeacherAssignmentDetailPage(
                     {similarityResults.totalComparisons} comparisons · Threshold: {Math.round(similarityResults.threshold * 100)}%
                   </p>
                 </div>
-                {similarityResults.flaggedCount === 0 ? (
-                  <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-                    No copies found
-                  </span>
-                ) : (
-                  <span className="rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-700">
-                    {similarityResults.flaggedCount} flagged
-                  </span>
-                )}
+                <div className="flex items-center gap-3">
+                  <label className="flex cursor-pointer items-center gap-2 text-xs text-slate-500">
+                    <input
+                      type="checkbox"
+                      checked={excludeLate}
+                      onChange={(e) => {
+                        const val = e.target.checked;
+                        setExcludeLate(val);
+                        handleCheckSimilarity(val);
+                      }}
+                      className="h-3.5 w-3.5 rounded accent-brand-600"
+                    />
+                    Exclude late submissions
+                  </label>
+                  {similarityResults.flaggedCount === 0 ? (
+                    <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                      No copies found
+                    </span>
+                  ) : (
+                    <span className="rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-700">
+                      {similarityResults.flaggedCount} flagged
+                    </span>
+                  )}
+                </div>
               </div>
               {similarityResults.flaggedCount > 0 && (
                 <div className="space-y-3">

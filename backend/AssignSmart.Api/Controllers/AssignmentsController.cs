@@ -210,7 +210,8 @@ public class AssignmentsController : ControllerBase
     [Authorize(Roles = "Teacher")]
     public async Task<ActionResult<SimilarityCheckResponse>> CheckSimilarity(
         Guid assignmentId,
-        [FromQuery] double threshold = 0.60)
+        [FromQuery] double threshold = 0.60,
+        [FromQuery] bool excludeLate = false)
     {
         var teacherId = User.GetUserId();
 
@@ -225,6 +226,13 @@ public class AssignmentsController : ControllerBase
             .Where(s => s.AssignmentId == assignmentId && !string.IsNullOrWhiteSpace(s.Answer))
             .Include(s => s.Student)
             .ToListAsync();
+
+        if (excludeLate)
+        {
+            submissions = submissions
+                .Where(s => s.SubmittedAt <= assignment.Deadline)
+                .ToList();
+        }
 
         if (submissions.Count < 2)
         {
