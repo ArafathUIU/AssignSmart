@@ -72,7 +72,7 @@ const teacherNav: NavSection[] = [
   {
     label: "Settings",
     items: [
-      { href: "/admin/settings", label: "Settings", icon: <Settings className="h-4 w-4" /> },
+      { href: "/teacher/settings", label: "Settings", icon: <Settings className="h-4 w-4" /> },
     ],
   },
 ];
@@ -92,7 +92,7 @@ const studentNav: NavSection[] = [
   {
     label: "Settings",
     items: [
-      { href: "/admin/settings", label: "Settings", icon: <Settings className="h-4 w-4" /> },
+      { href: "/student/settings", label: "Settings", icon: <Settings className="h-4 w-4" /> },
     ],
   },
 ];
