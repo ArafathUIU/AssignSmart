@@ -127,6 +127,97 @@ body {
   background-color: var(--color-slate-400);
 }
 
+/* Dark theme */
+[data-theme="dark"] {
+  --color-canvas: #0f172a;
+  --color-surface: #1e293b;
+}
+[data-theme="dark"] body {
+  background-color: #0f172a;
+  background-image: none;
+  color: #e2e8f0;
+}
+[data-theme="dark"] .bg-white,
+[data-theme="dark"] .bg-white\/95,
+[data-theme="dark"] .bg-white\/85,
+[data-theme="dark"] .bg-white\/80,
+[data-theme="dark"] .bg-white\/50,
+[data-theme="dark"] .bg-white\/55,
+[data-theme="dark"] .bg-white\/60,
+[data-theme="dark"] .bg-white\/70 {
+  background-color: #1e293b;
+}
+[data-theme="dark"] .text-slate-900 {
+  color: #f1f5f9;
+}
+[data-theme="dark"] .text-slate-700 {
+  color: #cbd5e1;
+}
+[data-theme="dark"] .text-slate-600 {
+  color: #94a3b8;
+}
+[data-theme="dark"] .text-slate-500 {
+  color: #64748b;
+}
+[data-theme="dark"] .border-slate-200,
+[data-theme="dark"] .border-slate-200\/80,
+[data-theme="dark"] .border-slate-200\/60,
+[data-theme="dark"] .border-slate-200\/90,
+[data-theme="dark"] .border-slate-100 {
+  border-color: #334155;
+}
+[data-theme="dark"] .bg-slate-50,
+[data-theme="dark"] .bg-slate-50\/50,
+[data-theme="dark"] .bg-slate-50\/60,
+[data-theme="dark"] .bg-slate-50\/70,
+[data-theme="dark"] .bg-slate-50\/80 {
+  background-color: #1e293b;
+}
+[data-theme="dark"] .bg-slate-100,
+[data-theme="dark"] .bg-slate-100\/80,
+[data-theme="dark"] .bg-slate-100\/60 {
+  background-color: #334155;
+}
+[data-theme="dark"] .divide-slate-100 {
+  border-color: #334155;
+}
+[data-theme="dark"] .hover\:bg-slate-50:hover,
+[data-theme="dark"] .hover\:bg-slate-50\/60:hover,
+[data-theme="dark"] .hover\:bg-slate-50\/70:hover {
+  background-color: #334155;
+}
+[data-theme="dark"] .hover\:bg-slate-100:hover,
+[data-theme="dark"] .hover\:bg-slate-100\/80:hover {
+  background-color: #1e293b;
+}
+[data-theme="dark"] .shadow-\[var\(--shadow-card\)\] {
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.3);
+}
+[data-theme="dark"] .border-slate-200\/80 {
+  border-color: #334155;
+}
+[data-theme="dark"] .bg-\[var\(--color-canvas\)\] {
+  background-color: #0f172a;
+}
+[data-theme="dark"] .bg-slate-900 {
+  background-color: #0f172a;
+}
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="email"],
+[data-theme="dark"] input[type="password"],
+[data-theme="dark"] input[type="number"],
+[data-theme="dark"] input[type="datetime-local"],
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+  background-color: #1e293b;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+  color: #64748b;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

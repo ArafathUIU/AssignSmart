@@ -8,12 +8,16 @@ import {
   CheckCircle2,
   GraduationCap,
   Mail,
+  Moon,
   ShieldCheck,
   Sparkles,
+  Sun,
   User as UserIcon,
+  Info,
 } from "lucide-react";
 import AuthGuard from "@/components/AuthGuard";
 import { PageHero } from "@/components/ui/PageHero";
+import { useTheme } from "@/components/ui/ThemeProvider";
 import { api, getStoredUser } from "@/lib/api";
 import type { Assignment, Submission, User } from "@/lib/types";
 import { Card, CardBody, CardHeader } from "@/components/ui/Card";
@@ -32,6 +36,7 @@ function numericId(guid: string): string {
 
 export default function StudentSettingsPage() {
   const [user] = useState<User | null>(() => getStoredUser());
+  const { dark, toggle: toggleTheme } = useTheme();
 
   const { data, loading } = useAsyncData(async () => {
     const [assignments, submissions] = await Promise.all([
@@ -65,6 +70,8 @@ export default function StudentSettingsPage() {
   }, [bellEnabled]);
 
   const allSubjects = [...new Set(assignments.map((a) => a.subjectName))].sort();
+  const submitted = submissions.length;
+  const pending = submissions.filter((s) => s.status !== "Graded").length;
 
   return (
     <AuthGuard roles={["Student"]}>
@@ -166,14 +173,12 @@ export default function StudentSettingsPage() {
                 </div>
                 <div className="rounded-xl bg-emerald-50 p-4 text-center">
                   <p className="text-3xl font-bold text-emerald-700">
-                    {submissions.length}
+                    {submitted}
                   </p>
                   <p className="mt-1 text-xs text-emerald-600">Submitted</p>
                 </div>
                 <div className="rounded-xl bg-amber-50 p-4 text-center">
-                  <p className="text-3xl font-bold text-amber-700">
-                    {submissions.filter((s) => s.status !== "Graded").length}
-                  </p>
+                  <p className="text-3xl font-bold text-amber-700">{pending}</p>
                   <p className="mt-1 text-xs text-amber-600">Pending</p>
                 </div>
                 <div className="rounded-xl bg-rose-50 p-4 text-center">
@@ -209,11 +214,45 @@ export default function StudentSettingsPage() {
           <Card>
             <CardHeader
               title="Preferences"
-              subtitle="Notification and display settings"
+              subtitle="Appearance and notification settings"
               action={<Sparkles className="h-4 w-4 text-slate-400" />}
             />
             <CardBody>
-              <div className="space-y-3">
+              <div className="space-y-4">
+                {/* Dark mode toggle */}
+                <div className="flex items-center justify-between rounded-lg bg-slate-50 px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    {dark ? (
+                      <Moon className="h-5 w-5 text-indigo-400" />
+                    ) : (
+                      <Sun className="h-5 w-5 text-amber-500" />
+                    )}
+                    <div>
+                      <p className="text-sm font-medium text-slate-900">
+                        Dark mode
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        {dark
+                          ? "Dark theme is active"
+                          : "Switch to dark theme"}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={toggleTheme}
+                    className={`relative inline-flex h-6 w-10 items-center rounded-full transition-colors ${
+                      dark ? "bg-indigo-500" : "bg-slate-300"
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                        dark ? "translate-x-[19px]" : "translate-x-0.5"
+                      }`}
+                    />
+                  </button>
+                </div>
+
+                {/* Deadline reminders */}
                 <div className="flex items-center justify-between rounded-lg bg-slate-50 px-4 py-3">
                   <div className="flex items-center gap-3">
                     {bellEnabled ? (
@@ -249,11 +288,11 @@ export default function StudentSettingsPage() {
             </CardBody>
           </Card>
 
-          {/* Account Info */}
+          {/* Account & About */}
           <Card>
             <CardHeader
               title="Account"
-              subtitle="Login and role information"
+              subtitle="Login and system information"
               action={<ShieldCheck className="h-4 w-4 text-slate-400" />}
             />
             <CardBody>
@@ -274,6 +313,21 @@ export default function StudentSettingsPage() {
                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
                     {graded.length} / {assignments.length}
                   </span>
+                </div>
+                <div className="flex items-center justify-between rounded-lg bg-slate-50 px-4 py-3">
+                  <span className="text-slate-500">Joined</span>
+                  <span className="font-medium text-slate-900">
+                    {user?.createdAt
+                      ? new Date(user.createdAt).toLocaleDateString()
+                      : "—"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between rounded-lg bg-slate-50 px-4 py-3">
+                  <span className="flex items-center gap-1.5 text-slate-500">
+                    <Info className="h-3.5 w-3.5" />
+                    Version
+                  </span>
+                  <span className="font-medium text-slate-900">2.0</span>
                 </div>
               </div>
             </CardBody>

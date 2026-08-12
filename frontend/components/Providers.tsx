@@ -1,0 +1,12 @@
+"use client";
+
+import { ToastProvider } from "@/components/ui/Toast";
+import { ThemeProvider } from "@/components/ui/ThemeProvider";
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <ThemeProvider>
+      <ToastProvider>{children}</ToastProvider>
+    </ThemeProvider>
+  );
+}

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { ToastProvider } from "@/components/ui/Toast";
+import { Providers } from "@/components/Providers";
 
 export const metadata: Metadata = {
   title: "AssignSmart",
@@ -11,7 +11,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en">
       <body className="min-h-screen">
-        <ToastProvider>{children}</ToastProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

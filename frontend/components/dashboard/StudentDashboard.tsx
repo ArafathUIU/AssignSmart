@@ -123,6 +123,23 @@ export function StudentDashboard({
     };
   });
 
+  const todayAssignments = assignments.filter((a) => {
+    const today = new Date();
+    const deadline = new Date(a.deadline);
+    return (
+      deadline.getDate() === today.getDate() &&
+      deadline.getMonth() === today.getMonth() &&
+      deadline.getFullYear() === today.getFullYear() &&
+      !submissionByAssignment.has(a.id)
+    );
+  });
+
+  const thisWeekCount = assignments.filter((a) => {
+    if (submissionByAssignment.has(a.id)) return false;
+    const diff = new Date(a.deadline).getTime() - Date.now();
+    return diff > 0 && diff < 7 * 24 * 60 * 60 * 1000;
+  }).length;
+
   return (
     <>
       <DashboardHero
@@ -147,6 +164,53 @@ export function StudentDashboard({
           <StatCard label="Submitted" value={submitted} icon={<Inbox className="h-5 w-5" />} tone="amber" />
           <StatCard label="Pending review" value={pending} icon={<Sparkles className="h-5 w-5" />} tone="slate" />
           <StatCard label="Graded" value={graded} icon={<CheckCircle2 className="h-5 w-5" />} tone="green" />
+        </div>
+      )}
+
+      {/* Weekly overview */}
+      {!loading && todayAssignments.length === 0 && thisWeekCount > 0 && (
+        <div className="mt-6">
+          <Card>
+            <CardHeader
+              title="This week"
+              subtitle={`${thisWeekCount} assignment${thisWeekCount === 1 ? "" : "s"} due in the next 7 days`}
+              action={<Clock className="h-4 w-4 text-slate-400" />}
+            />
+          </Card>
+        </div>
+      )}
+
+      {/* Today's Focus */}
+      {!loading && todayAssignments.length > 0 && (
+        <div className="mt-6">
+          <Card className="border-amber-200 bg-amber-50/40">
+            <CardHeader
+              title={`Today's focus — ${todayAssignments.length} assignment${todayAssignments.length === 1 ? "" : "s"} due today`}
+              subtitle="Complete these before midnight"
+              action={<Clock className="h-4 w-4 text-amber-500" />}
+            />
+            <CardBody>
+              <div className="space-y-2">
+                {todayAssignments.map((a) => (
+                  <Link
+                    key={a.id}
+                    href={`/student/assignments/${a.id}`}
+                    className="flex items-center justify-between rounded-lg bg-white px-4 py-3 shadow-[0_1px_2px_rgb(0_0_0/0.03)] transition-colors hover:bg-amber-50"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold text-slate-900">{a.title}</p>
+                      <p className="text-xs text-slate-500">
+                        {a.subjectName} · {a.teacherName} · {a.maxMarks} marks
+                      </p>
+                    </div>
+                    <span className="shrink-0 rounded-lg bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
+                      Due today
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </CardBody>
+          </Card>
         </div>
       )}
 

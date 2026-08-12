@@ -2,6 +2,7 @@
 
 import { useAsyncData } from "@/lib/useAsyncData";
 import { api } from "@/lib/api";
+import { useTheme } from "@/components/ui/ThemeProvider";
 import type { Assignment, SchoolClass, Subject, Submission, User } from "@/lib/types";
 import AuthGuard from "@/components/AuthGuard";
 import { PageHero } from "@/components/ui/PageHero";
@@ -15,8 +16,10 @@ import {
   GraduationCap,
   Inbox,
   LayoutDashboard,
+  Moon,
   ShieldCheck,
   Sparkles,
+  Sun,
   Users,
 } from "lucide-react";
 
@@ -28,6 +31,7 @@ export default function AdminSettingsPage() {
   const { data: submissions, loading: submissionsLoading } = useAsyncData(() => api.get<Submission[]>("/api/submissions"));
 
   const loading = usersLoading || classesLoading || subjectsLoading || assignmentsLoading || submissionsLoading;
+  const { dark, toggle } = useTheme();
 
   const roleCounts = {
     Admin: users?.filter((u) => u.role === "Admin").length ?? 0,
@@ -127,6 +131,35 @@ export default function AdminSettingsPage() {
                       );
                     },
                   )}
+                </div>
+              </CardBody>
+            </Card>
+
+            <Card>
+              <CardHeader title="System Preferences" subtitle="Appearance and application settings." action={<Moon className="h-4 w-4 text-slate-400" />} />
+              <CardBody>
+                <div className="flex items-center justify-between rounded-lg bg-slate-50 px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    {dark ? (
+                      <Moon className="h-5 w-5 text-indigo-400" />
+                    ) : (
+                      <Sun className="h-5 w-5 text-amber-500" />
+                    )}
+                    <div>
+                      <p className="text-sm font-medium text-slate-900">Dark mode</p>
+                      <p className="text-xs text-slate-500">
+                        {dark ? "Dark theme active" : "Switch to dark appearance"}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={toggle}
+                    className={`relative inline-flex h-6 w-10 items-center rounded-full transition-colors ${
+                      dark ? "bg-indigo-500" : "bg-slate-300"
+                    }`}
+                  >
+                    <span className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${dark ? "translate-x-[19px]" : "translate-x-0.5"}`} />
+                  </button>
                 </div>
               </CardBody>
             </Card>

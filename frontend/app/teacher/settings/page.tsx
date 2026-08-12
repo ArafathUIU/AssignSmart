@@ -5,13 +5,16 @@ import {
   BookOpen,
   GraduationCap,
   Mail,
+  Moon,
   ShieldCheck,
   Sparkles,
+  Sun,
   User as UserIcon,
   Users,
 } from "lucide-react";
 import AuthGuard from "@/components/AuthGuard";
 import { PageHero } from "@/components/ui/PageHero";
+import { useTheme } from "@/components/ui/ThemeProvider";
 import { api, getStoredUser } from "@/lib/api";
 import type { Assignment, Submission, TeacherAssignment, User } from "@/lib/types";
 import { Card, CardBody, CardHeader } from "@/components/ui/Card";
@@ -22,6 +25,7 @@ import { Avatar } from "@/components/ui/Avatar";
 
 export default function TeacherSettingsPage() {
   const [user] = useState<User | null>(() => getStoredUser());
+  const { dark, toggle: toggleTheme } = useTheme();
 
   const { data, loading } = useAsyncData(async () => {
     const [assignments, submissions, teaching] = await Promise.all([
@@ -246,6 +250,28 @@ export default function TeacherSettingsPage() {
                       ? new Date(user.createdAt).toLocaleDateString()
                       : "—"}
                   </span>
+                </div>
+                <div className="flex items-center justify-between rounded-lg bg-slate-50 px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    {dark ? (
+                      <Moon className="h-4 w-4 text-indigo-400" />
+                    ) : (
+                      <Sun className="h-4 w-4 text-amber-500" />
+                    )}
+                    <span className="text-slate-500">Dark mode</span>
+                  </div>
+                  <button
+                    onClick={toggleTheme}
+                    className={`relative inline-flex h-6 w-10 items-center rounded-full transition-colors ${
+                      dark ? "bg-indigo-500" : "bg-slate-300"
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                        dark ? "translate-x-[19px]" : "translate-x-0.5"
+                      }`}
+                    />
+                  </button>
                 </div>
               </div>
             </CardBody>
