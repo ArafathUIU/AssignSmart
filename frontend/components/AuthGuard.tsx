@@ -13,6 +13,8 @@ interface AuthSnapshot {
 
 const serverSnapshot: AuthSnapshot = { hasAuth: false, role: undefined };
 
+let cachedSnapshot: AuthSnapshot = { hasAuth: false, role: undefined };
+
 function readSnapshot(): AuthSnapshot {
   const token = getToken();
   const user = getStoredUser();
@@ -20,18 +22,21 @@ function readSnapshot(): AuthSnapshot {
   return { hasAuth: true, role: user.role };
 }
 
-function subscribe(callback: () => void): () => void {
-  const handle = () => callback();
-  window.addEventListener("storage", handle);
-  window.addEventListener("auth-changed", handle as EventListener);
-  return () => {
-    window.removeEventListener("storage", handle);
-    window.removeEventListener("auth-changed", handle as EventListener);
-  };
+function getSnapshot(): AuthSnapshot {
+  const next = readSnapshot();
+  if (
+    next.hasAuth !== cachedSnapshot.hasAuth ||
+    next.role !== cachedSnapshot.role
+  ) {
+    cachedSnapshot = next;
+  }
+  return cachedSnapshot;
 }
 
-function getSnapshot(): AuthSnapshot {
-  return readSnapshot();
+function subscribe(callback: () => void): () => void {
+  const handler = () => callback();
+  window.addEventListener("storage", handler);
+  return () => window.removeEventListener("storage", handler);
 }
 
 function getServerSnapshot(): AuthSnapshot {
