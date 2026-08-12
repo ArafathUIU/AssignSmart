@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   ArrowRight,
   BookOpen,
@@ -56,6 +56,12 @@ export function StudentDashboard({
   );
 
   const [showAllSubjects, setShowAllSubjects] = useState(false);
+
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 60000);
+    return () => clearInterval(timer);
+  }, []);
 
   const submissionByAssignment = new Map(
     submissions.map((s) => [s.assignmentId, s]),
@@ -136,7 +142,7 @@ export function StudentDashboard({
 
   const thisWeekCount = assignments.filter((a) => {
     if (submissionByAssignment.has(a.id)) return false;
-    const diff = new Date(a.deadline).getTime() - Date.now();
+    const diff = new Date(a.deadline).getTime() - now;
     return diff > 0 && diff < 7 * 24 * 60 * 60 * 1000;
   }).length;
 
