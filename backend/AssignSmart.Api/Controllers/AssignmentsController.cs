@@ -334,12 +334,12 @@ public class AssignmentsController : ControllerBase
 
                 if (sub is null)
                 {
-                    cells.Add(new MarksheetCell(assignment.Id, "Not submitted", null));
+                    cells.Add(new MarksheetCell(assignment.Id, "Not submitted", null, null));
                 }
                 else
                 {
                     cells.Add(new MarksheetCell(assignment.Id, sub.Status.ToString(),
-                        sub.Status == SubmissionStatus.Graded ? sub.Marks : null));
+                        sub.Status == SubmissionStatus.Graded ? sub.Marks : null, sub.Id));
                     if (sub.Status == SubmissionStatus.Graded)
                     {
                         totalMarks += sub.Marks ?? 0;

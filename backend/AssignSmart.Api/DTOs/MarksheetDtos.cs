@@ -9,7 +9,8 @@ public record MarksheetAssignment(
 public record MarksheetCell(
     Guid AssignmentId,
     string Status,
-    decimal? Marks
+    decimal? Marks,
+    Guid? SubmissionId
 );
 
 public record MarksheetRow(

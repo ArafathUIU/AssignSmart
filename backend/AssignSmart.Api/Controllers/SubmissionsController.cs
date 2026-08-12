@@ -31,6 +31,44 @@ public class SubmissionsController : ControllerBase
         return Ok(await _submissions.GetSubmissionsAsync(userId, role));
     }
 
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<SubmissionDto>> GetById(Guid id)
+    {
+        var userId = User.GetUserId();
+        var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value ?? string.Empty;
+
+        var submission = await _db.Submissions
+            .Include(s => s.Assignment)
+            .Include(s => s.Student)
+            .Include(s => s.Attachments)
+            .FirstOrDefaultAsync(s => s.Id == id)
+            ?? throw new ApiException(StatusCodes.Status404NotFound, "Submission not found.");
+
+        // Role-based access
+        if (role == "Teacher" && submission.Assignment.TeacherId != userId)
+            throw new ApiException(StatusCodes.Status403Forbidden, "Access denied.");
+        if (role == "Student" && submission.StudentId != userId)
+            throw new ApiException(StatusCodes.Status403Forbidden, "Access denied.");
+
+        return Ok(new SubmissionDto(
+            submission.Id,
+            submission.AssignmentId,
+            submission.Assignment.Title,
+            submission.StudentId,
+            submission.Student.Name,
+            submission.Answer,
+            submission.Status.ToString(),
+            submission.Marks,
+            submission.Feedback,
+            submission.SubmittedAt,
+            submission.GradedAt,
+            submission.Assignment.Deadline,
+            submission.Attachments.Select(a => new SubmissionAttachmentDto(
+                a.Id, a.FileName, a.ContentType, a.FileSize
+            )).ToList()
+        ));
+    }
+
     [HttpPost]
     [Authorize(Roles = "Student")]
     public async Task<ActionResult<SubmissionDto>> Submit(CreateSubmissionRequest request)

@@ -106,6 +106,7 @@ export interface MarksheetCell {
   assignmentId: string;
   status: string;
   marks: number | null;
+  submissionId: string | null;
 }
 
 export interface MarksheetRow {
