@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import {
   CheckCircle2,
   ClipboardList,
@@ -27,6 +28,7 @@ import { formatDate, isPast } from "@/lib/utils";
 
 export default function TeacherAssignmentsPage() {
   const { success, error } = useToast();
+  const searchParams = useSearchParams();
   const { data, loading, refresh } = useAsyncData(async () => {
     const [assignmentsData, teachingData] = await Promise.all([
       api.get<Assignment[]>("/api/assignments"),
@@ -62,6 +64,14 @@ export default function TeacherAssignmentsPage() {
 
   const assignments = useMemo(() => data?.assignments ?? [], [data]);
   const teaching = data?.teaching ?? [];
+
+  useEffect(() => {
+    const classId = searchParams.get("classId");
+    if (classId && teaching.length > 0) {
+      const match = teaching.find((t) => t.classId === classId);
+      if (match) setTeacherAssignmentId(match.id);
+    }
+  }, [searchParams, teaching]);
 
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
