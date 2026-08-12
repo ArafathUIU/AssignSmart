@@ -1,10 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useMemo, useState } from "react";
 import {
   ArrowRight,
   BookOpen,
   CheckCircle2,
+  ChevronDown,
+  ChevronUp,
   Clock,
   GraduationCap,
   Inbox,
@@ -51,6 +54,8 @@ export function StudentDashboard({
   const { data: attended, loading: attendedLoading } = useAsyncData(() =>
     api.get<TeacherAssignment[]>("/api/teacher-assignments/my-class"),
   );
+
+  const [showAllSubjects, setShowAllSubjects] = useState(false);
 
   const submissionByAssignment = new Map(
     submissions.map((s) => [s.assignmentId, s]),
@@ -157,7 +162,7 @@ export function StudentDashboard({
             {loading || attendedLoading ? (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {[0, 1, 2].map((i) => (
-                  <Skeleton key={i} className="h-36" />
+                  <Skeleton key={i} className="h-24" />
                 ))}
               </div>
             ) : subjectTiles.length === 0 ? (
@@ -167,18 +172,41 @@ export function StudentDashboard({
                 description="Subjects taught in your class will appear here once your teachers are assigned."
               />
             ) : (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {subjectTiles.map((tile) => (
-                  <SubjectTile
-                    key={tile.subjectId}
-                    subjectId={tile.subjectId}
-                    subjectName={tile.subjectName}
-                    teacherName={tile.teacherName}
-                    assignmentCount={tile.assignmentCount}
-                    gradedCount={tile.gradedCount}
-                  />
-                ))}
-              </div>
+              <>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {(showAllSubjects
+                    ? subjectTiles
+                    : subjectTiles.slice(0, 3)
+                  ).map((tile) => (
+                    <SubjectTile
+                      key={tile.subjectId}
+                      subjectId={tile.subjectId}
+                      subjectName={tile.subjectName}
+                      teacherName={tile.teacherName}
+                      assignmentCount={tile.assignmentCount}
+                      gradedCount={tile.gradedCount}
+                    />
+                  ))}
+                </div>
+                {subjectTiles.length > 3 && (
+                  <button
+                    onClick={() => setShowAllSubjects((v) => !v)}
+                    className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-xl border border-slate-200 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900"
+                  >
+                    {showAllSubjects ? (
+                      <>
+                        <ChevronUp className="h-4 w-4" />
+                        Show less
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown className="h-4 w-4" />
+                        Show all {subjectTiles.length} subjects
+                      </>
+                    )}
+                  </button>
+                )}
+              </>
             )}
           </CardBody>
         </Card>

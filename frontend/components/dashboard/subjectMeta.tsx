@@ -4,57 +4,52 @@ import {
   Atom,
   Beaker,
   BookMarked,
+  BookOpen,
   Calculator,
-  Dna,
   FlaskConical,
   Globe,
   Landmark,
   Languages,
   Leaf,
-  Lightbulb,
-  Music,
+  Monitor,
   Palette,
-  PenTool,
-  Piano,
-  Sigma,
-  Sprout,
-  BookOpen,
+  Dumbbell,
 } from "lucide-react";
-import type { ReactNode } from "react";
 
-const gradients = [
-  "from-indigo-500 to-violet-600",
-  "from-sky-500 to-blue-600",
-  "from-emerald-500 to-teal-600",
-  "from-amber-500 to-orange-600",
-  "from-rose-500 to-pink-600",
-  "from-fuchsia-500 to-purple-600",
-  "from-cyan-500 to-sky-600",
-  "from-lime-500 to-green-600",
-  "from-orange-500 to-red-600",
-  "from-blue-500 to-indigo-600",
-];
+const subjectMap: Record<string, { color: string; icon: typeof BookOpen }> = {
+  "mathematics":               { color: "#2563eb", icon: Calculator },
+  "math":                      { color: "#2563eb", icon: Calculator },
+  "general science":           { color: "#0d9488", icon: Beaker },
+  "science":                   { color: "#0d9488", icon: Beaker },
+  "physics":                   { color: "#4f46e5", icon: Atom },
+  "chemistry":                 { color: "#7c3aed", icon: FlaskConical },
+  "biology":                   { color: "#059669", icon: Leaf },
+  "bangla 1st paper":         { color: "#dc2626", icon: Languages },
+  "bangla 2nd paper":         { color: "#e11d48", icon: Languages },
+  "english 1st paper":        { color: "#0284c7", icon: Globe },
+  "english 2nd paper":        { color: "#0369a1", icon: Globe },
+  "bangladesh & global studies": { color: "#d97706", icon: Landmark },
+  "bgs":                       { color: "#d97706", icon: Landmark },
+  "ict":                       { color: "#0891b2", icon: Monitor },
+  "islam & moral education":  { color: "#475569", icon: BookMarked },
+  "physical education & health": { color: "#ea580c", icon: Dumbbell },
+  "arts & crafts":             { color: "#db2777", icon: Palette },
+};
 
-const iconSets: Array<Array<typeof Atom>> = [
-  [Calculator, Sigma, Lightbulb],
-  [Atom, FlaskConical, Beaker],
-  [Globe, Landmark, Languages],
-  [Leaf, Sprout, Dna],
-  [Palette, PenTool, Music, Piano],
-  [BookMarked, BookOpen],
-];
+const fallback = { color: "#6366f1", icon: BookOpen };
 
 export function subjectMeta(name: string): {
-  gradient: string;
-  Icon: ReactNode;
-  hash: number;
+  color: string;
+  Icon: React.ReactNode;
 } {
-  const normalized = name.trim().toLowerCase();
-  const hash = [...normalized].reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
-  const gradient = gradients[hash % gradients.length];
-  const iconSet = iconSets[hash % iconSets.length];
-  const Icon = iconSet[hash % iconSet.length];
-  return { gradient, Icon: <Icon className="h-5 w-5" />, hash };
+  const key = name.trim().toLowerCase();
+  const match = subjectMap[key];
+  if (!match) {
+    const Icon = fallback.icon;
+    return { color: fallback.color, Icon: <Icon className="h-5 w-5" /> };
+  }
+  const Icon = match.icon;
+  return { color: match.color, Icon: <Icon className="h-5 w-5" /> };
 }
 
 export function initialLetter(name: string): string {

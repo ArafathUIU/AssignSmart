@@ -22,7 +22,7 @@ export function SubjectCard({
   entry: SubjectEntry;
   hrefPrefix: string;
 }) {
-  const { gradient, Icon } = subjectMeta(entry.subjectName);
+  const { color, Icon } = subjectMeta(entry.subjectName);
   const [open, setOpen] = useState(false);
 
   const assignments = [...entry.assignments].sort((a, b) =>
@@ -43,10 +43,8 @@ export function SubjectCard({
         aria-expanded={open}
       >
         <span
-          className={cn(
-            "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-white shadow-[0_4px_12px_-2px_rgb(15_23_42/0.2)]",
-            gradient,
-          )}
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-lg"
+          style={{ backgroundColor: `${color}15`, color }}
         >
           {Icon}
         </span>
