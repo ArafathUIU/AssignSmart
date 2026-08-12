@@ -191,6 +191,13 @@ public static class DbSeeder
             db.TeacherAssignments.Add(NewTA(teachers[7].Id, cls.Id, phyEdu.Id));
         }
 
+        // Demo teacher assignments (for testing)
+        db.TeacherAssignments.Add(NewTA(demoTeacher.Id, class10A.Id, math.Id));
+        db.TeacherAssignments.Add(NewTA(demoTeacher.Id, class10A.Id, physics.Id));
+        db.TeacherAssignments.Add(NewTA(demoTeacher.Id, class10A.Id, english1st.Id));
+        db.TeacherAssignments.Add(NewTA(demoTeacher.Id, class9A.Id, math.Id));
+        db.TeacherAssignments.Add(NewTA(demoTeacher.Id, class9A.Id, chemistry.Id));
+
         // ========================================
         // 8. ASSIGNMENTS (per class, varied deadlines)
         // ========================================
