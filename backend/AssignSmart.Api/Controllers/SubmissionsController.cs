@@ -1,8 +1,11 @@
+using AssignSmart.Api.Data;
 using AssignSmart.Api.DTOs;
+using AssignSmart.Api.Exceptions;
 using AssignSmart.Api.Helpers;
 using AssignSmart.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AssignSmart.Api.Controllers;
 
@@ -12,10 +15,12 @@ namespace AssignSmart.Api.Controllers;
 public class SubmissionsController : ControllerBase
 {
     private readonly ISubmissionService _submissions;
+    private readonly AppDbContext _db;
 
-    public SubmissionsController(ISubmissionService submissions)
+    public SubmissionsController(ISubmissionService submissions, AppDbContext db)
     {
         _submissions = submissions;
+        _db = db;
     }
 
     [HttpGet]
@@ -57,5 +62,29 @@ public class SubmissionsController : ControllerBase
     {
         var teacherId = User.GetUserId();
         return Ok(await _submissions.UpdateStatusAsync(id, teacherId, request));
+    }
+
+    [HttpGet("{id:guid}/attachments")]
+    [Authorize(Roles = "Teacher")]
+    public async Task<ActionResult> DownloadAttachments(Guid id)
+    {
+        var teacherId = User.GetUserId();
+
+        var submission = await _db.Submissions
+            .Include(s => s.Assignment)
+            .Include(s => s.Attachments)
+            .FirstOrDefaultAsync(s => s.Id == id)
+            ?? throw new ApiException(StatusCodes.Status404NotFound, "Submission not found.");
+
+        if (submission.Assignment.TeacherId != teacherId)
+            throw new ApiException(StatusCodes.Status403Forbidden, "Access denied.");
+
+        return Ok(submission.Attachments.Select(a => new
+        {
+            a.FileName,
+            a.ContentType,
+            a.FileSize,
+            a.FileData
+        }));
     }
 }
